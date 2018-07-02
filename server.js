@@ -11,13 +11,48 @@ server.use(bodyParser.urlencoded({
   extended: true
 }));
 
+//todo: triggers in sequelize?
+
+//create a new task
+    //can have a parentId if it is a subtask
+
+//mark a task as complete
+    //this will make all subtasks complete
+    //then if all siblings are complete it will recursively complete it's parent task
+
+//mark a task as uncomplete
+    //this will recursively mark all of it's parent task as uncomplete
+    //does anything else need to happen here? i don't think so
+
+//delete a task
+    //this will recursively mark all of it's parent task as uncomplete
+
+server.put('task/:id/:complete', function(req, res) {
+    var complete = req.params.complete === 0 ? true : false;
+    var id = parseInt(req.params.id, 10);
+    //task.title = 'a very different title now'
+    //task.save().then(() => {})
+    db.tasks.findById(id).then(task => {
+        if(!!task){
+            task.complete = complete;
+            task.save().then(() => {})
+            //res.json(task.toJSON());
+        }else{
+            res.status(404).send();
+        }
+    }, e => {
+        res.status(500).send();
+    })
+
+
+})
 
 server.post('/task', function(req, res) {
 
     var body = req.body;
     //clean data
     if (body.description && typeof body.description === 'string'
-             && body.details && body.details === 'string') {
+             && body.details && typeof body.details === 'string') {
         body.description = body.description.trim();
         body.details = body.details.trim();
         if(body.taskId){
