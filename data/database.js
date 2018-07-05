@@ -5,6 +5,9 @@ let sequelizeInstance = new sequelize(undefined, undefined, undefined, {
 });
 
 let database = {};
+//needed for hooks
+//todo: refactor to get rid of circular ref
+sequelizeInstance.database = database;
 
 database.tasks = sequelizeInstance.import(__dirname + '/models/task.js');
 

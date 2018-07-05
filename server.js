@@ -86,14 +86,37 @@ server.get('/task/:id', function(req, res) {
 
 db.sequelizeInstance.sync({force: true}).then(function(){
     console.log('db is ready');
-
-    db.tasks.create({ description: 'clean back yard', details: 'mow the lawn and weed'})
-    .then(task1 => {
-        db.tasks.create({ description: 'landscape fabric', details: 'need landscape fabric around backyard fence', taskId: task1.id})
-        .then(task2 => {
-           
-        });
+    //todo: unit tests with a test database
+    db.tasks.create({ description: 'test', details: 'test', complete: false}).then(task1 => {
+        db.tasks.create({ description: 'landscape fabric', 
+                            details: 'need landscape fabric around backyard fence', 
+                            taskId: task1.id,
+                            complete: false
+        }).then(task2 => {
+            db.tasks.create({ description: 'blah', 
+                details: 'blah blah blah', 
+                taskId: task2.id,
+                complete: true
+            });
+            db.tasks.create({ description: 'blah', 
+                details: 'blah blah blah', 
+                taskId: task2.id,
+                complete: true
+            });
+            db.tasks.create({ description: 'blah', 
+                details: 'blah blah blah', 
+                taskId: task2.id,
+                complete: false
+            }).then(task => {
+                db.tasks.destroy({
+                    where: {
+                        id: task.id
+                    }
+                })
+            })
+        
     });
+});
 
     server.listen(PORT, function(){
         console.log('server listening on port: ' + PORT);
